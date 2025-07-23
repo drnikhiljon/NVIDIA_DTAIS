@@ -1,0 +1,108 @@
+-- Base entity table representing either a Digital Twin or an AI Model
+CREATE TABLE Project_Entities (
+    entity_id SERIAL PRIMARY KEY,                  -- Unique identifier for every project-level entity
+    name VARCHAR(100) NOT NULL,                    -- Name of the entity (e.g., Robot_A, AI_Model_B)
+    type VARCHAR(20) CHECK (type IN ('twin', 'model')), -- Generalized type: 'twin' or 'model'
+    project_id INT                                 -- Reference to internal or external project ID (FK can be added)
+);
+
+
+-- Specialization of Project_Entities for digital twins
+CREATE TABLE Digital_Twins (
+    twin_id INT PRIMARY KEY REFERENCES Project_Entities(entity_id),  -- Reuses entity_id as primary key
+    status VARCHAR(20),                           -- Status: active, archived, etc.
+    architecture TEXT,                            -- Hardware or software architecture details
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Specialization of Project_Entities for AI Models
+CREATE TABLE AI_Models (
+    model_id INT PRIMARY KEY REFERENCES Project_Entities(entity_id), -- Uses the same entity_id
+    version VARCHAR(20),                          -- Version label for the model
+    trained_on DATE,                              -- Date of model training
+    accuracy FLOAT,                               -- Accuracy/performance metric
+    file_path TEXT                                -- File location of the model
+);
+
+-- Simulation scenarios associated with digital twins
+CREATE TABLE Sim_Scenarios (
+    scenario_id SERIAL PRIMARY KEY,
+    twin_id INT REFERENCES Digital_Twins(twin_id), -- Each scenario belongs to one twin
+    name VARCHAR(100),
+    description TEXT,
+    parameters JSON,                              -- Scenario configuration (e.g., temp=50, speed=10)
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
+    result_summary TEXT
+);
+
+
+-- Sensor metadata mapped to digital twins
+CREATE TABLE Sensor_Integration (
+    sensor_id SERIAL PRIMARY KEY,
+    twin_id INT REFERENCES Digital_Twins(twin_id), -- Foreign key to the twin the sensor is attached to
+    type VARCHAR(50),                             -- e.g., Temperature, Pressure
+    manufacturer VARCHAR(100),
+    frequency FLOAT,                              -- e.g., 60Hz
+    unit VARCHAR(20)                              -- Measurement unit (Celsius, meters/sec)
+);
+
+-- Synthetic datasets generated from simulations
+CREATE TABLE Synthetic_Data (
+    data_id SERIAL PRIMARY KEY,
+    scenario_id INT REFERENCES Sim_Scenarios(scenario_id),
+    file_path TEXT,                               -- Path to synthetic data file
+    label VARCHAR(100),                           -- What the data represents (e.g., crash, safe run)
+    data_size INT,                                -- Size in MB
+    generated_on TIMESTAMP
+);
+
+-- General-purpose logs for all entities (twins and models)
+CREATE TABLE Logs (
+    log_id SERIAL PRIMARY KEY,
+    entity_id INT REFERENCES Project_Entities(entity_id), -- Logs tied to any kind of entity
+    timestamp TIMESTAMP,
+    log_type VARCHAR(50),                         -- e.g., 'telemetry', 'training_metric'
+    metric_name VARCHAR(100),                     -- e.g., 'temperature', 'latency'
+    value FLOAT
+);
+
+-- Reports table for both AI models and Digital Twins
+CREATE TABLE Reports (
+    report_id SERIAL PRIMARY KEY,
+    entity_id INT REFERENCES Project_Entities(entity_id), -- Could refer to a model or twin
+    type VARCHAR(20),                             -- e.g., 'QA', 'Validation'
+    status VARCHAR(20),                           -- e.g., 'approved', 'rejected'
+    approved_by VARCHAR(100),                     -- Name of reviewer
+    comments TEXT,
+    validated_on TIMESTAMP
+);
+
+
+-- View for summarizing Project Entities with specialization
+CREATE VIEW Entity_Summary AS
+SELECT
+    pe.entity_id,
+    pe.name,
+    pe.type,
+    dt.status,
+    am.version,
+    am.accuracy
+FROM Project_Entities pe
+LEFT JOIN Digital_Twins dt ON pe.entity_id = dt.twin_id
+LEFT JOIN AI_Models am ON pe.entity_id = am.model_id;
+
+
+SELECT * FROM Entity_Summary
+
+
+
+
+
+
+
+
+
+
