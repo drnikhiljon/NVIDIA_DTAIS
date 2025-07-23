@@ -1,262 +1,73 @@
-# NVIDIA_DTAIS
-NVIDIA Omniverse Digital Twin &amp; AI Simulation Database, along with the SQL table definitions, and a simple guide to normalization using generalization/specialization.
+# NVIDIA Omniverse Digital Twin & AI Simulation Database (PostgreSQL)
 
+This project provides a normalized and scalable database schema designed for managing Digital Twins, Simulation Scenarios, Sensor Integrations, AI Models, and Synthetic Data in an advanced simulation environment (inspired by NVIDIA Omniverse).
 
-Here’s a **beginner-friendly explanation** of each table in the **NVIDIA Omniverse Digital Twin & AI Simulation Database**, along with the **SQL table definitions**, and a **simple guide to normalization** using **generalization/specialization**.
-
----
-
-## 🔍 TABLE DESCRIPTIONS + SQL DEFINITIONS
+The database is built using **PostgreSQL** and follows best practices in **entity generalization and specialization**, **referential integrity**, and **logical normalization**.
 
 ---
 
-### 1. **`Digital_Twins`**
+## 🎯 Purpose
 
-Represents the digital replica of a physical system (like a robot or vehicle) being simulated.
+The purpose of this database is to:
 
-#### 📄 Attributes:
-
-* `twin_id` (ID of the digital twin)
-* `name` (Name of the twin model)
-* `type` (e.g., robot, chip, factory)
-* `status` (active/inactive)
-* `created_at`, `updated_at` (timestamps)
-* `project_id` (links to project or team)
-
-#### 🧩 SQL:
-
-```sql
-CREATE TABLE Digital_Twins (
-    twin_id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    type VARCHAR(50),
-    status VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    project_id INT
-);
-```
+* Maintain accurate records of digital twins and AI models
+* Store simulation scenarios and sensor data
+* Track telemetry logs and synthetic datasets
+* Validate and report on simulation and AI model performance
 
 ---
 
-### 2. **`Sim_Scenarios`**
+## 🧱 Database Structure
 
-Holds various testing or simulation environments for the digital twins.
+### Generalized Entity
 
-#### 📄 Attributes:
+* `Project_Entities`: Base table for both `Digital_Twins` and `AI_Models`
 
-* `scenario_id`, `twin_id`
-* `name`, `description`
-* `parameters` (stored as JSON or text)
-* `start_time`, `end_time`
-* `result_summary`
+### Specialization Tables
 
-#### 🧩 SQL:
+* `Digital_Twins`: Extra attributes for digital twin configurations
+* `AI_Models`: Attributes for trained AI models
 
-```sql
-CREATE TABLE Sim_Scenarios (
-    scenario_id SERIAL PRIMARY KEY,
-    twin_id INT REFERENCES Digital_Twins(twin_id),
-    name VARCHAR(100),
-    description TEXT,
-    parameters JSON,
-    start_time TIMESTAMP,
-    end_time TIMESTAMP,
-    result_summary TEXT
-);
-```
+### Related Tables
+
+* `Sim_Scenarios`: Simulation setups linked to digital twins
+* `Sensor_Integration`: Hardware sensors attached to twins
+* `Synthetic_Data`: Simulation-generated data for AI training
+* `Logs`: Unified logging of telemetry and model metrics
+* `Reports`: QA or validation reports for all project entities
 
 ---
 
-### 3. **`Sensor_Integration`**
+## 🧠 Schema Highlights
 
-Details of sensors connected to the digital twins.
-
-#### 📄 Attributes:
-
-* `sensor_id`, `twin_id`
-* `type`, `manufacturer`
-* `frequency`, `unit`
-
-#### 🧩 SQL:
-
-```sql
-CREATE TABLE Sensor_Integration (
-    sensor_id SERIAL PRIMARY KEY,
-    twin_id INT REFERENCES Digital_Twins(twin_id),
-    type VARCHAR(50),
-    manufacturer VARCHAR(100),
-    frequency FLOAT,
-    unit VARCHAR(20)
-);
-```
+* **Normalized design**: Minimizes redundancy and keeps schema flexible
+* **Uses foreign keys**: Ensures strong referential integrity
+* **Generalization**: Shared attributes are grouped under `Project_Entities`
+* **Specialization**: AI models and twins inherit only what they need
 
 ---
 
-### 4. **`Synthetic_Data`**
+## 📌 Sample Tables
 
-Generated (fake) data used to train AI models without using real-world data.
-
-#### 📄 Attributes:
-
-* `data_id`, `scenario_id`
-* `file_path`, `label`, `data_size`
-* `generated_on`
-
-#### 🧩 SQL:
-
-```sql
-CREATE TABLE Synthetic_Data (
-    data_id SERIAL PRIMARY KEY,
-    scenario_id INT REFERENCES Sim_Scenarios(scenario_id),
-    file_path TEXT,
-    label VARCHAR(100),
-    data_size INT,
-    generated_on TIMESTAMP
-);
-```
+| Table                | Purpose                               |
+| -------------------- | ------------------------------------- |
+| `Project_Entities`   | Parent entity for twins/models        |
+| `Digital_Twins`      | Twin-specific metadata                |
+| `AI_Models`          | AI model versions, accuracy, training |
+| `Sim_Scenarios`      | Scenarios to test and simulate twins  |
+| `Sensor_Integration` | Sensor metadata                       |
+| `Synthetic_Data`     | Simulated datasets for AI             |
+| `Logs`               | Time-stamped metrics (generalized)    |
+| `Reports`            | QA/validation results                 |
 
 ---
 
-### 5. **`Telemetry_Logs`**
+## 🚀 How to Use
 
-Captured logs during simulations (temperature, speed, position, etc.).
+1. **Install PostgreSQL**
+2. **Clone the repo**
+3. Run the SQL script:
 
-#### 📄 Attributes:
-
-* `log_id`, `twin_id`
-* `timestamp`, `metric_name`, `value`
-
-#### 🧩 SQL:
-
-```sql
-CREATE TABLE Telemetry_Logs (
-    log_id SERIAL PRIMARY KEY,
-    twin_id INT REFERENCES Digital_Twins(twin_id),
-    timestamp TIMESTAMP,
-    metric_name VARCHAR(100),
-    value FLOAT
-);
-```
-
----
-
-### 6. **`AI_Models`**
-
-AI models built and trained using the digital twins or synthetic data.
-
-#### 📄 Attributes:
-
-* `model_id`, `name`
-* `version`, `trained_on`, `accuracy`
-* `scenario_id`, `file_path`
-
-#### 🧩 SQL:
-
-```sql
-CREATE TABLE AI_Models (
-    model_id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    version VARCHAR(20),
-    trained_on DATE,
-    accuracy FLOAT,
-    scenario_id INT REFERENCES Sim_Scenarios(scenario_id),
-    file_path TEXT
-);
-```
-
----
-
-### 7. **`Validation_Reports`**
-
-QA reports confirming whether a simulation or AI model is acceptable.
-
-#### 📄 Attributes:
-
-* `report_id`, `model_id`
-* `status`, `approved_by`, `comments`
-
-#### 🧩 SQL:
-
-```sql
-CREATE TABLE Validation_Reports (
-    report_id SERIAL PRIMARY KEY,
-    model_id INT REFERENCES AI_Models(model_id),
-    status VARCHAR(20),
-    approved_by VARCHAR(100),
-    comments TEXT,
-    validated_on TIMESTAMP
-);
-```
-
----
-
-## 🔄 NORMALIZATION USING GENERALIZATION & SPECIALIZATION
-
-### 🎯 GOAL: Avoid redundancy and isolate shared vs. specialized data.
-
----
-
-### Step 1: **Generalize AI & Simulation into `Project_Entities`**
-
-Both Digital Twins and AI Models are project-based. You could define:
-
-```sql
-CREATE TABLE Project_Entities (
-    entity_id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
-    type VARCHAR(20),  -- 'twin' or 'model'
-    project_id INT
-);
-```
-
-Then, refactor:
-
-* `Digital_Twins` becomes a specialization with extra fields for `status`, `architecture`, etc.
-* `AI_Models` becomes a specialization with `accuracy`, `trained_on`, etc.
-
----
-
-### Step 2: **Separate `Logs` Table**
-
-Both simulation and sensor data generate logs. So use:
-
-```sql
-CREATE TABLE Logs (
-    log_id SERIAL PRIMARY KEY,
-    entity_id INT REFERENCES Project_Entities(entity_id),
-    timestamp TIMESTAMP,
-    log_type VARCHAR(50),
-    value FLOAT
-);
-```
-
-This helps in querying **all logs** across AI, simulation, and sensor data using one table.
-
----
-
-### Step 3: **Specialize `Reports`**
-
-Reports may be of type "QA", "Performance", or "Validation", so use:
-
-```sql
-CREATE TABLE Reports (
-    report_id SERIAL PRIMARY KEY,
-    entity_id INT REFERENCES Project_Entities(entity_id),
-    type VARCHAR(20),
-    status VARCHAR(20),
-    created_on TIMESTAMP
-);
-```
-
----
-
-## 🧠 Key Learnings for Beginners
-
-* **Normalization** separates concerns and avoids repetition.
-* **Generalization** helps manage shared data (e.g., logs for both twins & models).
-* **Specialization** lets you add custom attributes to specific types (e.g., `accuracy` for AI only).
-
----
-
-
+   ```bash
+   psql -U your_user -d your_database -f schema.sql
+   ```
