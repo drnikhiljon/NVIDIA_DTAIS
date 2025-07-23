@@ -1,0 +1,90 @@
+INSERT INTO Project_Entities (name, type, project_id) VALUES
+('Autonomous Vehicle 1', 'twin', 101),
+('Traffic Management AI v2.0', 'model', 102),
+('Robotic Arm Alpha', 'twin', 103),
+('Predictive Maintenance ML', 'model', 104),
+('Smart Building System v1', 'twin', 105),
+('Customer Support Chatbot', 'model', 106),
+('Drone Surveillance Beta', 'twin', 107),
+('Fraud Detection Engine', 'model', 108),
+('Manufacturing Line Digital Twin', 'twin', 109),
+('Healthcare Diagnostic AI', 'model', 110);
+
+INSERT INTO Digital_Twins (twin_id, status, architecture, created_at, updated_at) VALUES
+(1, 'active', 'Hardware: NVIDIA Jetson TX2, Software: ROS Noetic', '2023-01-15 10:00:00', '2024-06-20 14:30:00'),
+(3, 'inactive', 'Hardware: ABB IRB 120, Software: RobotStudio', '2022-05-20 09:15:00', '2023-11-01 11:00:00'),
+(5, 'active', 'Building Management System v3, BACnet', '2023-03-10 16:00:00', '2024-07-15 09:00:00'),
+(7, 'active', 'Custom Drone Framework, ArduPilot', '2024-02-01 13:45:00', '2024-07-20 10:00:00'),
+(9, 'under maintenance', 'Siemens TIA Portal, Rockwell Automation', '2023-08-25 11:00:00', '2024-07-22 16:00:00');
+
+INSERT INTO AI_Models (model_id, version, trained_on, accuracy, file_path) VALUES
+(2, '2.0.1', '2024-06-15', 0.95, '/models/traffic_v2.0.1.pkl'),
+(4, '1.1.0', '2023-10-20', 0.92, '/models/predictive_maintenance_v1.1.0.h5'),
+(6, '3.0.0', '2024-05-01', 0.88, '/models/chatbot_v3.0.0.pth'),
+(8, '1.5.0', '2024-04-10', 0.98, '/models/fraud_detection_v1.5.0.onnx'),
+(10, '0.9.0', '2024-07-01', 0.91, '/models/healthcare_diag_v0.9.0.pb');
+
+INSERT INTO Sim_Scenarios (twin_id, name, description, parameters, start_time, end_time, result_summary) VALUES
+(1, 'Autonomous City Driving', 'Simulate AV behavior in dense urban traffic.', '{"weather": "clear", "traffic_density": "high", "speed_limit": 50}', '2024-07-23 09:00:00', '2024-07-23 11:00:00', 'No collisions, 98% efficiency.'),
+(1, 'Highway Overtake Test', 'Test autonomous overtaking on a multi-lane highway.', '{"weather": "rainy", "speed": 100, "lane_changes": 5}', '2024-07-24 13:00:00', '2024-07-24 14:00:00', 'Successful overtakes, minor hydroplaning detected.'),
+(3, 'Assembly Line Path Optimization', 'Optimize robotic arm movement for faster assembly.', '{"product_type": "A", "parts_count": 10, "cycle_time_target": 60}', '2024-07-25 08:00:00', '2024-07-25 10:00:00', '15% cycle time reduction.'),
+(3, 'Defect Detection Training', 'Simulate defect placement for vision system training.', '{"defect_rate": 0.05, "defect_size": "medium"}', '2024-07-26 10:00:00', '2024-07-26 12:00:00', 'Generated 1000 images with simulated defects.'),
+(5, 'Energy Consumption Peak', 'Simulate peak electricity demand in the building.', '{"occupancy": "full", "temp_setpoint": 22}', '2024-07-27 15:00:00', '2024-07-27 17:00:00', 'Peak demand reached 1.2MW.'),
+(5, 'HVAC System Failure', 'Simulate HVAC malfunction and recovery.', '{"failure_point": "compressor", "recovery_time_target": 30}', '2024-07-28 09:00:00', '2024-07-28 10:00:00', 'System recovered in 25 minutes.'),
+(7, 'Perimeter Security Patrol', 'Simulate drone patrol patterns for security.', '{"area_size": "large", "flight_altitude": 50}', '2024-07-29 11:00:00', '2024-07-29 12:30:00', 'Covered 99% of the area.'),
+(7, 'Wind Gust Performance', 'Evaluate drone stability under high wind conditions.', '{"wind_speed": 40, "gust_frequency": "high"}', '2024-07-30 14:00:00', '2024-07-30 15:00:00', 'Minor deviation from flight path.'),
+(9, 'Bearing Wear Prediction', 'Simulate machine operation to predict bearing failure.', '{"runtime_hours": 5000, "load_factor": 0.8}', '2024-08-01 09:00:00', '2024-08-01 17:00:00', 'Predicted failure in 200 hours.'),
+(9, 'Production Throughput Test', 'Test manufacturing line for maximum production rate.', '{"product_mix": "A,B,C", "shift_duration": 8}', '2024-08-02 08:00:00', '2024-08-02 16:00:00', 'Achieved 95% of target throughput.');
+
+INSERT INTO Sensor_Integration (twin_id, type, manufacturer, frequency, unit) VALUES
+(1, 'Lidar', 'Velodyne', 10.0, 'Hz'),
+(1, 'Camera', 'Sony', 30.0, 'fps'),
+(3, 'Force Torque Sensor', 'ATI Industrial Automation', 100.0, 'N'),
+(3, 'Proximity Sensor', 'Keyence', 50.0, 'mm'),
+(5, 'Temperature', 'Honeywell', 0.1, 'Celsius'),
+(5, 'Humidity', 'Bosch', 0.1, '%RH'),
+(7, 'GPS', 'Garmin', 1.0, 'Hz'),
+(7, 'Accelerometer', 'Analog Devices', 200.0, 'm/s^2'),
+(9, 'Vibration', 'PCB Piezotronics', 1000.0, 'g'),
+(9, 'Pressure', 'Omron', 10.0, 'bar');
+
+
+INSERT INTO Synthetic_Data (scenario_id, file_path, label, data_size, generated_on) VALUES
+(1, '/data/sim_av_city_001.csv', 'safe_drive_data', 1024, '2024-07-23 11:05:00'),
+(1, '/data/sim_av_city_002.csv', 'near_miss_data', 512, '2024-07-23 11:10:00'),
+(2, '/data/sim_av_highway_001.mp4', 'overtake_success', 2048, '2024-07-24 14:05:00'),
+(3, '/data/sim_robot_path_opt.json', 'optimized_path_configs', 256, '2024-07-25 10:05:00'),
+(4, '/data/sim_defect_images_001.zip', 'training_images_defects', 4096, '2024-07-26 12:05:00'),
+(5, '/data/sim_bms_peak_load.txt', 'peak_energy_log', 128, '2024-07-27 17:05:00'),
+(6, '/data/sim_hvac_failure_log.xml', 'hvac_recovery_data', 64, '2024-07-28 10:05:00'),
+(7, '/data/sim_drone_patrol_map.kml', 'coverage_map', 300, '2024-07-29 12:35:00'),
+(8, '/data/sim_drone_wind_gust.csv', 'flight_deviations', 150, '2024-07-30 15:05:00'),
+(9, '/data/sim_bearing_vib_data.npy', 'vibration_profile_dataset', 768, '2024-08-01 17:05:00');
+
+INSERT INTO Logs (entity_id, timestamp, log_type, metric_name, value) VALUES
+(1, '2024-07-23 10:15:00', 'telemetry', 'speed', 45.5),
+(2, '2024-07-23 10:20:00', 'training_metric', 'loss', 0.02),
+(3, '2024-07-23 10:25:00', 'telemetry', 'joint_angle', 90.1),
+(4, '2024-07-23 10:30:00', 'prediction_event', 'remaining_useful_life_hours', 1500.0),
+(5, '2024-07-23 10:35:00', 'telemetry', 'room_temperature', 23.5),
+(6, '2024-07-23 10:40:00', 'inference_log', 'response_time_ms', 120.0),
+(7, '2024-07-23 10:45:00', 'telemetry', 'battery_level_percent', 85.0),
+(8, '2024-07-23 10:50:00', 'alert', 'fraud_detected', 1.0),
+(9, '2024-07-23 10:55:00', 'telemetry', 'machine_vibration_g', 0.5),
+(10, '2024-07-23 11:00:00', 'inference_log', 'diagnosis_confidence', 0.93);
+
+
+INSERT INTO Reports (entity_id, type, status, approved_by, comments, validated_on) VALUES
+(1, 'QA', 'approved', 'Dr. Smith', 'All critical functions tested and passed.', '2024-07-20 10:00:00'),
+(2, 'Validation', 'approved', 'Ms. Jones', 'Model performance exceeds benchmarks.', '2024-07-18 14:30:00'),
+(3, 'Maintenance', 'rejected', 'Mr. Davis', 'Requires recalibration of end-effector.', '2024-07-21 09:00:00'),
+(4, 'Performance', 'approved', 'Dr. Lee', 'Accuracy sustained on new datasets.', '2024-07-19 11:00:00'),
+(5, 'Audit', 'pending', NULL, 'Pending review of energy consumption data.', NULL),
+(6, 'Security', 'approved', 'Mr. White', 'No vulnerabilities found in recent scan.', '2024-07-17 16:00:00'),
+(7, 'Flight Test', 'approved', 'Capt. Miller', 'Passed all aerial maneuver tests.', '2024-07-16 13:00:00'),
+(8, 'Compliance', 'approved', 'Ms. Brown', 'Adheres to all regulatory guidelines.', '2024-07-15 09:30:00'),
+(9, 'Calibration', 'approved', 'Mr. Garcia', 'Sensors recalibrated successfully.', '2024-07-14 10:00:00'),
+(10, 'Review', 'rejected', 'Dr. Clark', 'Further data required for conclusive diagnosis.', '2024-07-13 15:00:00');
+
+
+
